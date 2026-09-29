@@ -25,7 +25,7 @@ the_model = Model(Ipopt.Optimizer)
 )
 
 # Power Flow Definitions
-pkl = v[k]^2
+pkl = v[k][1]^2
 
 # Production constraints
 @constraint(
