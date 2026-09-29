@@ -13,7 +13,7 @@ Ck = [C[1], 0, 0, C[2], 0, C[3], 0, C[4], C[5], C[6], C[7]] # Set of consumers c
 
 # Parameters
 KGi = 
-MGi =
+MGi = [0.02, 0.15, 0.08, 0.07, 0.04, 0.17, 0.26, 0.05]
 Dj =
 
 
