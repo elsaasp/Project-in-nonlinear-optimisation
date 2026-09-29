@@ -12,9 +12,10 @@ C = [1:7] # Consumers C_j
 Ck = [C[1], 0, 0, C[2], 0, C[3], 0, C[4], C[5], C[6], C[7]] # Set of consumers c_j at node k
 
 # Parameters
-KGi = 
+KGi = [175 100 150 150 300 350 400 300 200] # Energy production cost [SEK/pu]
 MGi =
-Dj =
+Dj = [0.1 0.19 0.11 0.09 0.21 0.05 0.04] # Demand active power[pu]
+bkl = 
 
 
 # Variables
