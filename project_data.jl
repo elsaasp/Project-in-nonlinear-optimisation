@@ -6,7 +6,7 @@ N = [1:11] # Nodes k
 E = [[N[1],N[2]], [N[1],N[11]], [N[2],N[3]], [N[2],N[11]], [N[3],N[4]], [N[3],N[9]], [N[4],N[5]], [N[5],N[6]], [N[5],N[8]], [N[6],N[7]], [N[7],N[8]], [N[7],N[9]], [N[8],N[9]], [N[9],N[10]], [N[10],N[11]]] # Edges (k,l)
 
 G = [1:9] # Generators G_i
-Gk = [0, [G[1], G[2], G[3]], G[4], G[5], G[6], 0, G[7], 0, [G[8,G[9]]],0, 0 ] # Set of generators g_i at node k
+Gk = [0, [G[1], G[2], G[3]], G[4], G[5], G[6], 0, G[7], 0, [G[8],G[9]],0, 0 ] # Set of generators g_i at node k
 
 C = [1:7] # Consumers C_j
 Ck = [C[1], 0, 0, C[2], 0, C[3], 0, C[4], C[5], C[6], C[7]] # Set of consumers c_j at node k
