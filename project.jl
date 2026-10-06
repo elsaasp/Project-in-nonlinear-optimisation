@@ -11,18 +11,20 @@ the_model = Model(Ipopt.Optimizer)
 # Create the variables and set their common lower bound
 @variables(
     the_model,
-    x[1:n_generators],
-    y[1:n_generators],
+    begin
+        x[1:n_generators]
+        y[1:n_generators]
 
-    # Active & reactive power flow variables
-    pkl[1:n_edges],
-    plk[1:n_edges],
-    qkl[1:n_edges],
-    qlk[1:n_edges],
+        # Active & reactive power flow variables
+        pkl[1:n_edges]
+        plk[1:n_edges]
+        qkl[1:n_edges]
+        qlk[1:n_edges]
 
-    #Voltage & angle variables
-    v[1:k_nodes],
-    theta[1:k_nodes],
+        #Voltage & angle variables
+        v[1:k_nodes]
+        theta[1:k_nodes]
+    end
 )
 
 @objective(
@@ -67,7 +69,7 @@ the_model = Model(Ipopt.Optimizer)
 @constraint(
     the_model,
     reactive_power_balance[k = 1:k_nodes],
-    sum(y[g] for g in Gk[k]) == sum(qkl[e] for e in 1:n_edges if E[e][1] == k) - sum(qkl[e] for e in 1:n_edges if E[e][2] == k)
+    sum(y[g] for g in Gk[k]) == sum(qkl[e] for e in 1:n_edges if E[e][1] == k) + sum(qkl[e] for e in 1:n_edges if E[e][2] == k)
 )
 
 # Power Flow Definitions
