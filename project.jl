@@ -49,24 +49,24 @@ the_model = Model(Ipopt.Optimizer)
 
 @constraint(
     the_model,
-    v_constr[k = 1:n_nodes],
+    v_constr[k = 1:k_nodes],
     0.98 <= v[k] <= 1.02
 )
 
 @constraint(
     the_model,
-    theta_constr[k = 1:n_nodes],
+    theta_constr[k = 1:k_nodes],
     -pi <= theta[k] <= pi
 )
 # System Balances
 @constraint(
     the_model,
-    active_power_balance[k = 1:n_nodes],
-    sum(x[g] for g in Gk[k]) - sum(Dj[j] for j in Ck[k]) == sum(pkl[e] for e in 1:n_edges if E[e][1] == k) - sum(plk[e] for e in 1:n_edges if E[e][2] == k)
+    active_power_balance[k = 1:k_nodes],
+    sum(x[g] for g in Gk[k]) - sum(Dj[j] for j in Ck[k]) == sum(pkl[e] for e in 1:n_edges if E[e][1] == k) + sum(plk[e] for e in 1:n_edges if E[e][2] == k)
 )
 @constraint(
     the_model,
-    reactive_power_balance[k = 1:n_nodes],
+    reactive_power_balance[k = 1:k_nodes],
     sum(y[g] for g in Gk[k]) == sum(qkl[e] for e in 1:n_edges if E[e][1] == k) - sum(qkl[e] for e in 1:n_edges if E[e][2] == k)
 )
 
@@ -101,14 +101,16 @@ the_model = Model(Ipopt.Optimizer)
     the_model,
     ql_def[e = 1:n_edges],
     qlk[e] == -v[E[e][2]]^2 * bkl[e] + 
-              v[E[e][1]] * v[E[e][2]] * bkl[e] * cos(theta[E[e][2]] - theta[E[e][1]]) + 
+              v[E[e][1]] * v[E[e][2]] * bkl[e] * cos(theta[E[e][2]] - theta[E[e][1]]) - 
               v[E[e][1]] * v[E[e][2]] * gkl[e] * sin(theta[E[e][2]] - theta[E[e][1]])
 )
 
 # Print the optimization problem in the terminal
+println("The optimization problem is:")
 println(the_model)
 
 # Solve the optimization problem
+println("Solving the optimization problem...")
 optimize!(the_model)
 
 # Print selected results for further analysis
