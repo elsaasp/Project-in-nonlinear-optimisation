@@ -111,6 +111,11 @@ the_model = Model(Ipopt.Optimizer)
               v[E[e][1]] * v[E[e][2]] * gkl[e] * sin(theta[E[e][2]] - theta[E[e][1]])
 )
 
+@constraint(
+    the_model, 
+    reference_angle, 
+    theta[1] == 0)
+
 # Print the optimization problem in the terminal
 println("The optimization problem is:")
 println(the_model)
@@ -119,16 +124,66 @@ println(the_model)
 println("Solving the optimization problem...")
 optimize!(the_model)
 
-# Print selected results for further analysis
-# NOTE: This is the type of output you need to analyise in your project.
-#       You can use the output to check if the solver has found a solution, what the solution is, and what the dual variables are.
-println("") # Printing white line after solver output, before printing
-println("Termination status: ", termination_status(the_model))
-println("Optimal objective function value: ", objective_value(the_model))
-println("Optimal point: ", value.(x))
-println("Dual variables/Lagrange multipliers corresponding to some constraints:")
-println(dual.(ub_constr))
-println(dual.(LowerBoundRef.(x)))
+
+#CLEAN THIS CODE!!!
+using Printf
+
+# Solver information: inspect this before trusting variable values.
+println(solution_summary(the_model))
+
+if !is_solved_and_feasible(the_model)
+    error("The solver did not report a successful feasible solution.")
+end
+
+println("\nTotal production cost")
+@printf("%.8f SEK\n", objective_value(the_model))
+
+println("\nGenerator results")
+println("Generator   Active power [pu]   Reactive power [pu]")
+for g in 1:n_generators
+    @printf("%9d %19.8f %21.8f\n",
+            g, value(x[g]), value(y[g]))
+end
+
+println("\nNode results — angles relative to node 1")
+println("Node   Voltage [pu]   Angle [rad]   Angle [degrees]")
+for k in 1:k_nodes
+    @printf("%4d %14.8f %13.8f %17.8f\n",
+            k, value(v[k]), value(theta[k]),
+            rad2deg(value(theta[k])))
+end
+
+println("\nLine results — all powers in pu")
+println(" k   l          P_kl          P_lk          Q_kl          Q_lk")
+for e in 1:n_edges
+    k, l = E[e]
+    @printf("%2d %3d %13.8f %13.8f %13.8f %13.8f\n",
+            k, l,
+            value(pkl[e]), value(plk[e]),
+            value(qkl[e]), value(qlk[e]))
+end
+
+println("\nActive-power consistency check")
+generation = sum(value.(x))
+demand = sum(Dj)
+losses = sum(value.(pkl) .+ value.(plk))
+
+@printf("Total generation: %.8f pu\n", generation)
+@printf("Total demand:     %.8f pu\n", demand)
+@printf("Total line losses: %.8f pu\n", losses)
+@printf("Balance residual: %.3e pu\n",
+        generation - demand - losses)
+
+# # Print selected results for further analysis
+# # NOTE: This is the type of output you need to analyise in your project.
+# #       You can use the output to check if the solver has found a solution, what the solution is, and what the dual variables are.
+# println("") # Printing white line after solver output, before printing
+# println("Termination status: ", termination_status(the_model))
+# println("Optimal objective function value: ", objective_value(the_model))
+# println("Optimal point: ", value.(x))
+# println("Dual variables/Lagrange multipliers corresponding to some constraints:")
+# println(dual.(ub_constr))
+# println(dual.(LowerBoundRef.(x)))
 
 
 
