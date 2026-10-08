@@ -64,14 +64,16 @@ the_model = Model(Ipopt.Optimizer)
 @constraint(
     the_model,
     active_power_balance[k = 1:k_nodes],
-    sum(x[g] for g in Gk[k]) - sum(Dj[j] for j in Ck[k]) == sum(pkl[e] for e in 1:n_edges if E[e][1] == k) + sum(plk[e] for e in 1:n_edges if E[e][2] == k)
+    sum(x[g] for g in Gk[k]) - sum(Dj[j] for j in Ck[k]) == 
+        sum(pkl[e] for e in 1:n_edges if E[e][1] == k) + 
+        sum(plk[e] for e in 1:n_edges if E[e][2] == k)
 )
 @constraint(
     the_model,
     reactive_power_balance[k = 1:k_nodes],
     sum(y[g] for g in Gk[k]) == 
         sum(qkl[e] for e in 1:n_edges if E[e][1] == k) + 
-        sum(qkl[e] for e in 1:n_edges if E[e][2] == k)
+        sum(qlk[e] for e in 1:n_edges if E[e][2] == k)
 )
 
 # Power Flow Definitions
