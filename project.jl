@@ -69,7 +69,9 @@ the_model = Model(Ipopt.Optimizer)
 @constraint(
     the_model,
     reactive_power_balance[k = 1:k_nodes],
-    sum(y[g] for g in Gk[k]) == sum(qkl[e] for e in 1:n_edges if E[e][1] == k) + sum(qkl[e] for e in 1:n_edges if E[e][2] == k)
+    sum(y[g] for g in Gk[k]) == 
+        sum(qkl[e] for e in 1:n_edges if E[e][1] == k) + 
+        sum(qkl[e] for e in 1:n_edges if E[e][2] == k)
 )
 
 # Power Flow Definitions
@@ -86,7 +88,7 @@ the_model = Model(Ipopt.Optimizer)
     the_model,
     pl_def[e = 1:n_edges],
     plk[e] == v[E[e][2]]^2 * gkl[e] - 
-             v[E[e][1]] * v[E[e][2]] * gkl[e] * cos(theta[E[e][2]] - theta[E[e][1]]) + 
+             v[E[e][1]] * v[E[e][2]] * gkl[e] * cos(theta[E[e][2]] - theta[E[e][1]]) - 
              v[E[e][1]] * v[E[e][2]] * bkl[e] * sin(theta[E[e][2]] - theta[E[e][1]]))
 
 # q_kl definition (Equation q_def)
